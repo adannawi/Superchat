@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+ <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <title> Spring Boot chat app </title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Merriweather&display=swap" rel="stylesheet">
+  
+ </head>
+
+ <body>
+ 	<noscript>
+ 		<h2>Sorry, your browser doesn't support JavaScript</h2>
+ 	</noscript>
+	<style>
+	
+.hidden{
+	display: none;
+ }
+ 
+ 
+ ul#messageArea{
+    list-style-type: none;
+	margin-top: -40px;
+    overflow: auto;
+    overflow-y: scroll;
+    max-height: 250px;
+    max-width: inherit;
+    width: 100%;  
+  }
+  
+  #chat-page p{
+  font-family: 'Merriweather', serif;
+  font-weight: bold;
+  }
+ 
+ .jumbotron#messageJumbo{
+ max-height:300px;
+ height:300px;
+ }
+ 
+ ::-webkit-scrollbar{
+ width: 20px;}
+	
+	</style>
+	<div id="username-page">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class = "jumbotron" style="background-color:#33d6ff; margin-top:5%;">
+					<div class="container text-center">
+						<h1 class="display-4" style="font-family:Helvetica; color:#fff;">Hello!</h1>
+						<p class="lead" id="connected-now">Users currently chatting: </p>
+						<p>Start chatting now! Simply enter your username and click "Chat"</p>
+						<form class="form" id="usernameForm">
+							<div class = "form-group" style="margin:30px;">
+								<input type="text" class="form-control" id="userName" style="background-color:#fff;"/>
+							</div>
+							
+							<div class = "form-group">
+								<div class = "btn-group" role="group">
+									<button type="button" id="randomName" class="btn btn-secondary">Random Name</button>
+									<button type="submit" id="submit" class="btn btn-primary btn-md">Chat</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="chat-page" class="hidden" style="margin-top:20px">
+		<div class="connecting"></div>
+		<div class="container">
+			<nav class="navbar navbar-light" style="background-color: #606060;">
+				<span class="navbar-brand mb-0 h1" style="font-weight: bold; color: #fff;">Superchat</span>
+			</nav>
+		</div>
+		<div class="container">
+			<div class="jumbotron" id="messageJumbo" style="background-color:#d8d8d8; border-radius:0px; border: 1px solid #606060">
+				<ul id="messageArea" class="list-unstyled">
+			</div>
+			<form class="form" id="messageForm">
+				<div class="form-group">
+					<div class="input-group clearfix" style="border: 1px solid #606060">
+						<input type="text" id="message" autocomplete="off" class="form-control" style="outline:none;box-shadow:none;border-radius:0px;"/>
+						<button type="submit" class="primary">Send</button>
+					</div>
+				</div>
+			</form>
+		<h2 id="chatH2" class="hidden">Chatting as </h2>
+		<ul id = "connectedUsers" class="hidden">
+		</div>
+	</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/js/zScript.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+ 	
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+ <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <title> Spring Boot chat app </title>
+  <link rel="stylesheet" href="/css/zStyle.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  
+ </head>
+
+ <body>
+ 	<noscript>
+ 		<h2>Sorry, your browser doesn't support JavaScript</h2>
+ 	</noscript>
+ 	
+ 	<script type="text/javascript">
+
+ 	</script>
+
+ 	<div id="username-page">
+	 	<div class="username-select">
+		 	<div class="username-header">
+		 		<h1>Enter your username</h1><br>
+		 	</div>
+		 	<div class="username-select-box">
+		 	 <form id="usernameForm" name="usernameForm">
+		 		<input type="text" id="userName">
+		 		<input type="button" id="randomName" value="Random Name"><br><br>
+		 		<input type="submit" id="submit">
+         	 <br><br>Connected now:<p id="connected-now"></p>
+		 	</form>
+		 	</div>
+	 	</div>
+ 	</div>
+
+ 	<div id="chat-page" class="hidden">
+		<div class ="chat-container">
+			<div class="chat-header">
+			</div>
+		</div>
+		<div class = "connecting">
+			Connecting...
+		</div>
+
+		<ul id = "messageArea">
+		</ul>
+
+		<form id="messageForm" name="messageForm">
+			<div class = "form-group">
+				<div class = "input-group clearfix">
+					<input type="text" id="message" placeholder="Type a message" class="form-control"/>
+					<button type="submit" class="primary">Send</button>
+				</div>
+			</div>
+		</form>
+
+		<h2 id="chatH2">Chatting as </h2>
+		<ul id = "connectedUsers">
+		</ul>
+ 	</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/js/zScript.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+ </body>
+
+</html>

@@ -19,11 +19,11 @@ public class WebSocketEventListener {
 
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
-
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         logger.info("Received a new web socket connection");
         ChatController.connected++;
+     
     }
 
     @EventListener
@@ -34,12 +34,14 @@ public class WebSocketEventListener {
         if(username != null) {
             logger.info("User Disconnected : " + username);
             ChatController.connected--;
+            ChatController.users.remove(username);
 
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setType(ChatMessage.MessageType.LEAVE);
             chatMessage.setSender(username);
 
             messagingTemplate.convertAndSend("/topic/public", chatMessage);
+            messagingTemplate.convertAndSend("/topic/users", ChatController.users);
         }
     }
 }

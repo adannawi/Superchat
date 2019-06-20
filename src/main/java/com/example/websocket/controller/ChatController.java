@@ -1,5 +1,8 @@
 package com.example.websocket.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -13,6 +16,7 @@ import com.example.websocket.model.ChatMessage;
 @Controller
 public class ChatController {
 	public static int connected = 0;
+	public static List<String> users = new ArrayList<String>();
 	
 	@MessageMapping("/chat.sendMessage")
 	@SendTo("/topic/public")
@@ -24,7 +28,20 @@ public class ChatController {
 	@SendTo("/topic/public")
 	public ChatMessage addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
 		headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
+		users.add(chatMessage.getSender());
 		return chatMessage;
+	}
+	
+	@MessageMapping("/chat.getUsers")
+	@SendTo("/topic/users")
+	public List<String> getUsers(){
+		return users;
+	}
+	
+	@MessageMapping("/chat.getUserCount")
+	@SendTo("/topic/users/util")
+	public int getCount() {
+		return connected;
 	}
 	
 	@GetMapping("/currentusers")

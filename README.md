@@ -1,0 +1,1 @@
+Superchat is a demo application built using a Java backend (Spring Boot) and a HTML/CSS/JS frontend using WebSockets for communication and Bootstrap for styling.

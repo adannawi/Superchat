@@ -17,13 +17,13 @@ var stompClient = null;
 var username = null;
 var xmlHttp = null;
 
+var currentUsers = 0;
+
+
+var userArea = document.querySelector('#userArea');
 
 function code(){
-
-	xmlHttp = new XMLHttpRequest();
-	xmlHttp.onreadystatechange = ProcessRequest;
-	xmlHttp.open("GET", "http://localhost:8000/currentusers", true);
-	xmlHttp.send();
+	document.querySelector('#connected-now').appendChild(document.createTextNode(currentUsers));
 }
 window.onload = code;
 
@@ -31,22 +31,7 @@ usernameForm.addEventListener('submit', connect, true);
 messageForm.addEventListener('submit', sendMessage, true);
 randomButton.addEventListener('click', randomName, true);
 
-function ProcessRequest(){
-	var message;
-	console.log(xmlHttp);
-	if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
-		if (xmlHttp.responseText == "Not found"){
-			message = "Not found";
-		}else{
-			var info = eval("(" + xmlHttp.responseText + ")");
-			message = info;
-		}
-	document.querySelector('#connected-now').appendChild(document.createTextNode(message));
-	}
-}
-
 function randomName(event){
-	var char='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ0123456789';
 	var adjectives = ["Lazy", "Dependent", "Ambitious", "Brave", "Weak", "Murderous", "Intelligent", "Diligent", "Apathetic", "Depressed"];
 	var nouns=["Narwhal", "Bottle", "Phone", "Car", "Whale", "Elephant", "Spring", "Rhino", "Cat", "Dog", "Mouse", "Rat", "Monkey"];
 	var randomString = "";
@@ -74,9 +59,10 @@ function connect(event){
 function onConnected(event){
 	// subscribe to the Public topic
 	stompClient.subscribe('/topic/public', onMessageReceived);
+	stompClient.subscribe('/topic/users', updateUsers);
 	
 	stompClient.send("/app/chat.addUser", {}, JSON.stringify({sender: username, type: 'JOIN'}))
-			
+	stompClient.send("/app/chat.getUsers", {}, 'test')
 	connectingElement.classList.add('hidden');
 	connectedUsers.appendChild(
 			document.createElement('li').appendChild(
@@ -103,8 +89,6 @@ function sendMessage(event){
 function onMessageReceived(payload){
 	var message = JSON.parse(payload.body);
 	var messageElement = document.createElement('li');
-	var breakElement = document.createElement('hr');
-	messageElement.appendChild(breakElement);
 	
 	if (message.type === 'JOIN'){
 		message.content = message.sender + ' joined!';
@@ -119,6 +103,22 @@ function onMessageReceived(payload){
 	messageElement.appendChild(textElement);
 	messageArea.appendChild(messageElement);
 	messageArea.scrollTop = messageArea.scrollHeight;
+}
+
+function updateUsers(payload){
+	var userListPre = payload.body.replace(/[\[\]"]+/g, '');
+	var userList = userListPre.split(',');
+	
+	currentUsers = userList.length;
+	
+	while(userArea.firstChild) userArea.removeChild(userArea.firstChild);
+	console.log(userList);
+	for(var i = 0; i < userList.length; i++){
+		var userListElement = document.createElement('li');
+		userListElement.textContent = userList[i];
+		userArea.appendChild(userListElement);
+	}
+
 }
 
 

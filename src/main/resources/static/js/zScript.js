@@ -10,7 +10,6 @@ var messageArea = document.querySelector('#messageArea');
 var connectedUsers = document.querySelector('#connectedUsers');
 
 var connectingElement = document.querySelector('.connecting');
-
 var randomButton = document.querySelector('#randomName');
 
 var stompClient = null;
@@ -20,11 +19,24 @@ var xmlHttp = null;
 var currentUsers = 0;
 
 
+var userStomp = null;
+
+
 var userArea = document.querySelector('#userArea');
 
 function code(){
-	document.querySelector('#connected-now').appendChild(document.createTextNode(currentUsers));
+	var userSock = new SockJS('/users');
+	userStomp = Stomp.over(userSock);
+	userStomp.connect({}, mainConnected, onError);
 }
+
+function mainConnected(event){
+	console.log('connected');
+	userStomp.subscribe('/topic/utility', updateUserCount);
+	userStomp.send('/app/chat.getUserCount', {}, '');
+}
+
+
 window.onload = code;
 
 usernameForm.addEventListener('submit', connect, true);
@@ -106,6 +118,7 @@ function onMessageReceived(payload){
 }
 
 function updateUsers(payload){
+	userStomp.send('/app/chat.getUserCount', {}, '');
 	var userListPre = payload.body.replace(/[\[\]"]+/g, '');
 	var userList = userListPre.split(',');
 	
@@ -118,7 +131,12 @@ function updateUsers(payload){
 		userListElement.textContent = userList[i];
 		userArea.appendChild(userListElement);
 	}
-
+}
+	
+function updateUserCount(payload){
+	var connectedNow = document.querySelector('#connected-now');
+	while(connectedNow.firstChild) connectedNow.removeChild(connectedNow.firstChild);
+	connectedNow.appendChild(document.createTextNode(payload.body));		
 }
 
 

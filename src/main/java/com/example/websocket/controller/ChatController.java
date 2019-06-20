@@ -28,6 +28,7 @@ public class ChatController {
 	@SendTo("/topic/public")
 	public ChatMessage addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
 		headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
+		connected++;
 		users.add(chatMessage.getSender());
 		return chatMessage;
 	}
@@ -35,11 +36,12 @@ public class ChatController {
 	@MessageMapping("/chat.getUsers")
 	@SendTo("/topic/users")
 	public List<String> getUsers(){
+		getCount();
 		return users;
 	}
 	
 	@MessageMapping("/chat.getUserCount")
-	@SendTo("/topic/users/util")
+	@SendTo("/topic/utility")
 	public int getCount() {
 		return connected;
 	}

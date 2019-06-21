@@ -83,15 +83,14 @@ function connect(event){
     event.preventDefault();
 }
 
-function onConnected(event){
+async function onConnected(event){
 	// subscribe to the Public topic
 	stompClient.subscribe('/topic/users', updateUsers);
 	stompClient.subscribe('/topic/public', onMessageReceived);
 	chatSubscription = stompClient.subscribe('/topic/public/' + channelID, onMessageReceived);
 
 	channelSub = stompClient.subscribe('/topic/utility/channels', updateChannels);
-
-	stompClient.send("/app/chat.getChannels", {}, '');
+	await stompClient.send("/app/chat.getChannels", {}, '');
 	stompClient.send("/app/chat.addUser", {}, JSON.stringify({sender: username, type: 'JOIN'}))
 	stompClient.send("/app/chat.getUsers", {}, '')
 	
@@ -121,18 +120,37 @@ function sendMessage(event){
 function onMessageReceived(payload){
 	var message = JSON.parse(payload.body);
 	var messageElement = document.createElement('li');
+	var totalMessage = document.createElement('div');
+	
+	
+	var userNameElement = document.createElement('span');
+	var textElement = document.createElement('span');
+	
+	userNameElement.setAttribute('style', 'color: red; padding-left:5px;');
+	textElement.setAttribute('style', 'color: red;');
 	
 	if (message.type === 'JOIN'){
-		message.content = message.sender + ' joined!';
+		userNameElement.appendChild(document.createTextNode(message.sender));
+		message.content = ' joined!';
+		
 	}else if (message.type === 'LEAVE'){
-		message.content = message.sender + ' left!';
+		userNameElement.appendChild(document.createTextNode(message.sender));
+		message.content = ' left!';
+		
 	}else{
-		message.content = message.sender + ': ' + message.content;
+		textElement.setAttribute('style', 'color: black;');
+		userNameElement.appendChild(document.createTextNode(message.sender));
+		message.content = ': ' + message.content;
+		
 	}
-	var textElement = document.createElement('p');
+	totalMessage.append(userNameElement);
+	
 	var messageText = document.createTextNode(message.content);
 	textElement.appendChild(messageText);
-	messageElement.appendChild(textElement);
+	
+	totalMessage.appendChild(textElement);
+	
+	messageElement.appendChild(totalMessage);
 	console.log('in on message received: ' + messageArea);
 	messageArea.appendChild(messageElement);
 	messageArea.scrollTop = messageArea.scrollHeight;
@@ -162,7 +180,7 @@ function updateUserCount(payload){
 
 // Function to update the channel list, currently buggy as it appends the channel list every time
 // a user joins
-function updateChannels(payload){
+async function updateChannels(payload){
 	/*
 	 * 				<!--  Channel functionality, append new messageArea on new channel, hide all others on channel select -->
 					<div id = "messageRoom">

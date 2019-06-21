@@ -83,16 +83,19 @@ function connect(event){
     event.preventDefault();
 }
 
-async function onConnected(event){
+function onConnected(event){
 	// subscribe to the Public topic
 	stompClient.subscribe('/topic/users', updateUsers);
 	stompClient.subscribe('/topic/public', onMessageReceived);
 	chatSubscription = stompClient.subscribe('/topic/public/' + channelID, onMessageReceived);
 
 	channelSub = stompClient.subscribe('/topic/utility/channels', updateChannels);
-	await stompClient.send("/app/chat.getChannels", {}, '');
-	stompClient.send("/app/chat.addUser", {}, JSON.stringify({sender: username, type: 'JOIN'}))
-	stompClient.send("/app/chat.getUsers", {}, '')
+	stompClient.send("/app/chat.getChannels", {}, '');
+	
+	setTimeout( function(){	
+		stompClient.send("/app/chat.addUser", {}, JSON.stringify({sender: username, type: 'JOIN'}))
+		stompClient.send("/app/chat.getUsers", {}, '')
+	}, 500);
 	
 	connectingElement.classList.add('hidden');
 	connectedUsers.appendChild(

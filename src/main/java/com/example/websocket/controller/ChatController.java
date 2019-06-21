@@ -1,6 +1,7 @@
 package com.example.websocket.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -11,15 +12,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.websocket.model.ChatChannel;
 import com.example.websocket.model.ChatMessage;
 
 @Controller
 public class ChatController {
 	public static int connected = 0;
 	public static List<String> users = new ArrayList<String>();
+	public static List<ChatChannel> channels = new ArrayList<ChatChannel>(Arrays.asList(
+			new ChatChannel("0", "General"), new ChatChannel("1", "Offtopic")));
 	
-	@MessageMapping("/chat.sendMessage")
-	@SendTo("/topic/public")
+	@MessageMapping("/chat.sendMessage/{channelID}")
+	@SendTo("/topic/public/{channelID}")
 	public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
 		return chatMessage;
 	}
@@ -36,7 +40,6 @@ public class ChatController {
 	@MessageMapping("/chat.getUsers")
 	@SendTo("/topic/users")
 	public List<String> getUsers(){
-		getCount();
 		return users;
 	}
 	
@@ -46,9 +49,9 @@ public class ChatController {
 		return connected;
 	}
 	
-	@GetMapping("/currentusers")
-	@ResponseBody
-	public int getConnectedUsers() {
-		return connected;
+	@MessageMapping("/chat.getChannels")
+	@SendTo("/topic/utility/channels")
+	public List<ChatChannel> returnChannels(){
+		return channels;
 	}
 }

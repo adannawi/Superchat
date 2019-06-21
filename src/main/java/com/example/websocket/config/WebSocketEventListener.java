@@ -39,7 +39,7 @@ public class WebSocketEventListener {
 
             messagingTemplate.convertAndSend("/topic/public", chatMessage);
             messagingTemplate.convertAndSend("/topic/users", ChatController.users);
-            messagingTemplate.convertAndSend("/topic/utility", 0);
+            messagingTemplate.convertAndSend("/topic/utility", ChatController.connected);
         }
     }
 }

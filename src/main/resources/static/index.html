@@ -88,14 +88,24 @@
 	<div id="chat-page" class="hidden" style="margin-top:20px">
 		<div class="connecting"></div>
 		<div class="container">
+		
 			<nav class="navbar navbar-light" style="background-color: #606060;">
 				<span class="navbar-brand mb-0 h1" style="font-weight: bold; color: #fff;">Superchat</span>
+				
+				<button class="btn btn-primary" type="button" id="channelCreate" style="float:right;">+</button>
+				<div class="dropdown">
+					<select id="channel-list" name="channels"></select>
+				</div>
 			</nav>
 		</div>
 		<div class="container">
-			<div class="container" id="messageJumbo" style="background-color:#d8d8d8; border-radius:0px; border: 1px solid #606060; padding:0px;">
+			<div class="container" id="messageJumbo" style="background-color:#fff; border-radius:0px; border: 1px solid #606060; padding:0px;">
+				
 				<div id="chatRoom" style="width: 85%; height: 100%; float:left;">
-					<ul id="messageArea" class="list-unstyled"></ul>
+				<!--  Channel functionality, append new messageArea on new channel, hide all others on channel select -->
+					<div id = "messageRoom">
+						<ul id="messageArea" class="list-unstyled"></ul>
+					</div>
 				</div>
 				
 				<div id="userList" style="border-style: none none none solid; border-width:2px; border-color: #606060; width:15%; height:100%; float:right;">

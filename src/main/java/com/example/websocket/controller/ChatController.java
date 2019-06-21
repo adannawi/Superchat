@@ -19,8 +19,7 @@ import com.example.websocket.model.ChatMessage;
 public class ChatController {
 	public static int connected = 0;
 	public static List<String> users = new ArrayList<String>();
-	public static List<ChatChannel> channels = new ArrayList<ChatChannel>(Arrays.asList(
-			new ChatChannel("0", "General"), new ChatChannel("1", "Offtopic")));
+	public static List<ChatChannel> channels = new ArrayList<ChatChannel>(Arrays.asList(new ChatChannel("1", "Offtopic")));
 	
 	@MessageMapping("/chat.sendMessage/{channelID}")
 	@SendTo("/topic/public/{channelID}")

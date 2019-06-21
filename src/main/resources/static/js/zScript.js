@@ -184,27 +184,31 @@ function updateUserCount(payload){
 // Function to update the channel list, currently buggy as it appends the channel list every time
 // a user joins
 async function updateChannels(payload){
-	/*
-	 * 				<!--  Channel functionality, append new messageArea on new channel, hide all others on channel select -->
-					<div id = "messageRoom">
-						<ul id="messageArea" class="list-unstyled"></ul>
-					</div>
-	 */
+
 	// Populate dropbox with channel selections
 	if (channelSelectBox.size == 0){
 		var channels = JSON.parse(payload.body);
 		var docfrag = document.createDocumentFragment();
 		
+		// General channel will always be visible, ID of 0
+		var messageUL = document.createElement('ul');
+		messageUL.setAttribute('id', 'messageArea0');
+		messageUL.setAttribute('class', 'hidden');
+		messageRoom.appendChild(messageUL);
+		docfrag.appendChild(new Option('General', '0'));
+		
+		
 		for(var i = 0; i < channels.length; i++){
 			docfrag.appendChild(new Option(channels[i].name, channels[i].id));
-			var messageUL = document.createElement('ul');
+			
+			messageUL = document.createElement('ul');
 			messageUL.setAttribute('id', 'messageArea'+channels[i].id);
 			messageUL.setAttribute('class', 'hidden');
-			console.log(messageUL);
 			messageRoom.appendChild(messageUL);
 		}
-		messageArea = document.querySelector('#messageArea'+channels[0].id);
-		document.querySelector('#messageArea'+channels[0].id).setAttribute('class', 'list-unstyled');
+		messageArea = document.querySelector('#messageArea0');
+		document.querySelector('#messageArea0').setAttribute('class', 'list-unstyled');
+		
 		channelSelectBox.appendChild(docfrag);		
 		channelSub.unsubscribe();
 	}

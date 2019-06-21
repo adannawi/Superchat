@@ -6,7 +6,8 @@ var messageInput = document.querySelector('#message');
 var usernamePage = document.querySelector('#username-page');
 var chatPage = document.querySelector('#chat-page');
 
-var messageArea = document.querySelector('#messageArea');
+var messageRoom = document.querySelector('#messageRoom');
+var messageArea = document.querySelector('#messageArea'+channelID);
 var connectedUsers = document.querySelector('#connectedUsers');
 
 var connectingElement = document.querySelector('.connecting');
@@ -16,7 +17,7 @@ var stompClient = null;
 var username = null;
 var xmlHttp = null;
 var chatSubscription = null;
-
+var channelSub = null;
 var currentUsers = 0;
 
 
@@ -88,11 +89,11 @@ function onConnected(event){
 	stompClient.subscribe('/topic/public', onMessageReceived);
 	chatSubscription = stompClient.subscribe('/topic/public/' + channelID, onMessageReceived);
 
-	stompClient.subscribe('/topic/utility/channels', updateChannels);
-	
+	channelSub = stompClient.subscribe('/topic/utility/channels', updateChannels);
+
+	stompClient.send("/app/chat.getChannels", {}, '');
 	stompClient.send("/app/chat.addUser", {}, JSON.stringify({sender: username, type: 'JOIN'}))
 	stompClient.send("/app/chat.getUsers", {}, '')
-	stompClient.send("/app/chat.getChannels", {}, '');
 	
 	connectingElement.classList.add('hidden');
 	connectedUsers.appendChild(
@@ -132,6 +133,7 @@ function onMessageReceived(payload){
 	var messageText = document.createTextNode(message.content);
 	textElement.appendChild(messageText);
 	messageElement.appendChild(textElement);
+	console.log('in on message received: ' + messageArea);
 	messageArea.appendChild(messageElement);
 	messageArea.scrollTop = messageArea.scrollHeight;
 }
@@ -161,7 +163,12 @@ function updateUserCount(payload){
 // Function to update the channel list, currently buggy as it appends the channel list every time
 // a user joins
 function updateChannels(payload){
-	
+	/*
+	 * 				<!--  Channel functionality, append new messageArea on new channel, hide all others on channel select -->
+					<div id = "messageRoom">
+						<ul id="messageArea" class="list-unstyled"></ul>
+					</div>
+	 */
 	// Populate dropbox with channel selections
 	if (channelSelectBox.size == 0){
 		var channels = JSON.parse(payload.body);
@@ -169,13 +176,18 @@ function updateChannels(payload){
 		
 		for(var i = 0; i < channels.length; i++){
 			docfrag.appendChild(new Option(channels[i].name, channels[i].id));
-		}	
-		channelSelectBox.appendChild(docfrag);
+			var messageUL = document.createElement('ul');
+			messageUL.setAttribute('id', 'messageArea'+channels[i].id);
+			messageUL.setAttribute('class', 'hidden');
+			console.log(messageUL);
+			messageRoom.appendChild(messageUL);
+		}
+		messageArea = document.querySelector('#messageArea'+channels[0].id);
+		document.querySelector('#messageArea'+channels[0].id).setAttribute('class', 'list-unstyled');
+		channelSelectBox.appendChild(docfrag);		
+		channelSub.unsubscribe();
 	}
-	
-	
-	
-	
+
 }
 
 // Function to change the user's current channel, the idea is to unsubscribe from the current chat channel,
@@ -184,8 +196,18 @@ function changeChannel(){
 	chatSubscription.unsubscribe();
 	chatSubscription = stompClient.subscribe('/topic/public/' + channelSelectBox.selectedIndex, onMessageReceived);
 	channelID = channelSelectBox.selectedIndex;
-	
-	
+	messageArea = document.querySelector('#messageArea'+channelID);
+		
+	// On channel change, set all children of the messageRoom div to hidden EXCEPT for the child that matches the selected channel
+	var channelChildren = messageRoom.children;
+	for (var i = 0; i < channelChildren.length; i++){
+		var channelChild = channelChildren[i];
+		if (channelID === i){
+			channelChild.setAttribute('class', 'list-unstyled');
+		}else{
+			channelChild.setAttribute('class', 'hidden');
+		}
+	}
 }
 
 function displayCreateChannel(event){
